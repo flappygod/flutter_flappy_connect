@@ -2,6 +2,22 @@
 
 A new Flutter plugin.
 
+How to use?
+
+//add listener
+ Flutterflappyconnect.addNetworkChangeListener(() async {
+ 
+      //connectionType
+      ConnectionType connectionType=await Flutterflappyconnect.getConnectionType();
+      
+      print(connectionType.toString());
+      
+      
+      
+});
+
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter
