@@ -31,14 +31,14 @@ class Flutterflappyconnect {
       EventChannel('flutterflappyconnect_event');
 
   //监听
-  static List<VoidCallback> _networkChangedListeners = new List<VoidCallback>();
+  static List<VoidCallback> _networkChangedListeners = [];
 
   //是否处于监听状态
   static bool _isListen = false;
 
   //获取当前的连接类型
   static Future<ConnectionType> getConnectionType() async {
-    final String version = await _channel.invokeMethod('getConnectionType');
+    final String? version = await _channel.invokeMethod('getConnectionType');
     if (version == "0") {
       return ConnectionType.TYPE_2G;
     }
@@ -72,9 +72,9 @@ class Flutterflappyconnect {
     if (!_isListen) {
       _isListen = true;
       //注册用于和原生代码的持续回调
-      Stream<String> stream = _eventChannel
+      Stream<String?> stream = _eventChannel
           .receiveBroadcastStream()
-          .map((result) => result as String);
+          .map((result) => result as String?);
       //数据
       stream.listen((data) {
         //数据
