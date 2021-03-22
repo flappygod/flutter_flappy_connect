@@ -50,11 +50,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged:)
                                                  name:kReachabilityChangedNotificationFlappy object:nil];
-    // 设置网络检测的站点
-    //    NSString *remoteHostName = @"www.baidu.com";
-    //    self.hostReachability = [ReachabilityFlappy reachabilityWithHostName:remoteHostName];
-    //    [self.hostReachability startNotifier];
-    //    [self updateInterfaceWithReachability:self.hostReachability];
     
     self.internetReachability = [ReachabilityFlappy reachabilityForInternetConnection];
     [self.internetReachability startNotifier];
