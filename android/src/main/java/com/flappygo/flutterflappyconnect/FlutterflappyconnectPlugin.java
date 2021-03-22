@@ -45,7 +45,7 @@ public class FlutterflappyconnectPlugin implements FlutterPlugin, MethodCallHand
         context = flutterPluginBinding.getApplicationContext();
         addBroadCast(context);
 
-        channel = new MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "flutterflappyconnect");
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutterflappyconnect");
         channel.setMethodCallHandler(this);
 
         eventChannel = new EventChannel(flutterPluginBinding.getBinaryMessenger(), "flutterflappyconnect_event");
