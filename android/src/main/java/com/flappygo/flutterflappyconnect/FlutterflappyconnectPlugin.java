@@ -64,16 +64,17 @@ public class FlutterflappyconnectPlugin implements FlutterPlugin, MethodCallHand
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutterflappyconnect");
 
         FlutterflappyconnectPlugin plugin = new FlutterflappyconnectPlugin();
         plugin.context = registrar.activity().getApplicationContext();
         plugin.addBroadCast(registrar.activity().getApplicationContext());
 
+        plugin.channel = new MethodChannel(registrar.messenger(), "flutterflappyconnect");
+        plugin.channel.setMethodCallHandler(plugin);
+
         plugin.eventChannel = new EventChannel(registrar.messenger(), "flutterflappyconnect_event");
         plugin.eventChannel.setStreamHandler(plugin);
 
-        channel.setMethodCallHandler(plugin);
     }
 
     @Override
