@@ -4,16 +4,16 @@
 #import "ReachabilityFlappy.h"
 
 
-//整个插件
+//interface
 @interface FlutterflappyconnectPlugin ()<FlutterStreamHandler>
 
-//消息event
+//event
 @property(nonatomic,strong) FlutterEventChannel* eventChannel;
-//消息发送
+//event sink
 @property(nonatomic,strong) FlutterEventSink eventSink;
-//host变化
+//host changed
 @property (nonatomic) ReachabilityFlappy *hostReachability;
-//网络类型变化
+//Reachability changed
 @property (nonatomic) ReachabilityFlappy *internetReachability;
 
 
@@ -23,26 +23,26 @@
 @implementation FlutterflappyconnectPlugin
 
 
-//注册
+//reg
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     
     
-    //创建eventChannel
+    //eventChannel
     FlutterEventChannel* eventChannel=[FlutterEventChannel eventChannelWithName:@"flutterflappyconnect_event"
                                                                 binaryMessenger:[registrar messenger]];
     //channel
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"flutterflappyconnect"
                                      binaryMessenger:[registrar messenger]];
-    //创建
+    //instance
     FlutterflappyconnectPlugin* instance = [[FlutterflappyconnectPlugin alloc] init];
-    //保留参数
+    //set value
     instance.eventChannel=eventChannel;
-    //设置
+    //set StreamHandler
     [eventChannel setStreamHandler:instance];
-    //开启监听
+    //start listen
     [instance listenNetWorkingStatus];
-    //添加
+    //add delegate
     [registrar addMethodCallDelegate:instance channel:channel];
 }
 
@@ -63,16 +63,16 @@
     [self updateInterfaceWithReachability:curReach];
 }
 
-//更新
+//evetn
 - (void)updateInterfaceWithReachability:(ReachabilityFlappy *)reachability
 {
-    //消息发送
+    //sink
     if(_eventSink!=nil){
         _eventSink(@"");
     }
 }
 
-//移除
+//remove
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar{
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:kReachabilityChangedNotificationFlappy
@@ -81,7 +81,7 @@
 }
 
 
-//消息
+//handle method call
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"getConnectionType" isEqualToString:call.method]) {
         result([self getNetconnType]);
@@ -90,87 +90,78 @@
     }
 }
 
-//获取网络类型
+//get type
 - (NSString *)getNetconnType{
     
-    NSString *netconnType = @"";
-    NSString *netconnTypeMine = @"";
+    NSString *netconnType = @"Mobile";
+    NSString *netconnTypeMine = @"4";
     
     ReachabilityFlappy *reach = [ReachabilityFlappy reachabilityWithHostName:@"www.baidu.com"];
     
     switch ([reach currentReachabilityStatus]) {
-        case NotReachable:// 没有网络
+            //no network
+        case NotReachable:
         {
-            
             netconnType = @"no network";
             netconnTypeMine=@"6";
-        }
             break;
-            
-        case ReachableViaWiFi:// Wifi
+        }
+            // Wifi
+        case ReachableViaWiFi:
         {
             netconnType = @"Wifi";
             netconnTypeMine=@"5";
-        }
             break;
-            
-        case ReachableViaWWAN:// 手机自带网络
+        }
+            // self
+        case ReachableViaWWAN:
         {
-            // 获取手机网络类型
             CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
-            
             NSString *currentStatus = info.currentRadioAccessTechnology;
-            
-            netconnTypeMine=@"4";
-            
-            if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyGPRS"]) {
-                
+            if ([currentStatus isEqualToString:CTRadioAccessTechnologyGPRS]) {
                 netconnTypeMine=@"0";
                 netconnType = @"GPRS";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyEdge"]) {
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyEdge]) {
                 netconnTypeMine=@"0";
                 netconnType = @"2.75G EDGE";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyWCDMA"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyWCDMA]){
                 netconnTypeMine=@"1";
                 netconnType = @"3G";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyHSDPA"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyHSDPA]){
                 netconnTypeMine=@"1";
                 netconnType = @"3.5G HSDPA";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyHSUPA"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyHSUPA]){
                 netconnTypeMine=@"1";
                 netconnType = @"3.5G HSUPA";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyCDMA1x"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyCDMA1x]){
                 netconnTypeMine=@"0";
                 netconnType = @"2G";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyCDMAEVDORev0"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyCDMAEVDORev0]){
                 netconnTypeMine=@"1";
                 netconnType = @"3G";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyCDMAEVDORevA"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyCDMAEVDORevA]){
                 netconnTypeMine=@"1";
                 netconnType = @"3G";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyCDMAEVDORevB"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyCDMAEVDORevB]){
                 netconnTypeMine=@"1";
                 netconnType = @"3G";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyeHRPD"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyeHRPD]){
                 netconnTypeMine=@"1";
                 netconnType = @"HRPD";
-            }else if ([currentStatus isEqualToString:@"CTRadioAccessTechnologyLTE"]){
-                
+            }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyLTE]){
                 netconnTypeMine=@"2";
                 netconnType = @"4G";
+            }else if (@available(iOS 14.1, *)) {
+                if ([currentStatus isEqualToString:CTRadioAccessTechnologyNRNSA]){
+                    netconnTypeMine=@"3";
+                    netconnType = @"5G NSA";
+                }else if ([currentStatus isEqualToString:CTRadioAccessTechnologyNR]){
+                    netconnTypeMine=@"3";
+                    netconnType = @"5G";
+                }
             }
         }
             break;
-            
         default:
             break;
     }
@@ -179,16 +170,14 @@
 }
 
 
-//事件传输被终止
+//end
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-    //设置sink
     _eventSink = nil;
     return nil;
 }
-//事件传输开启
+//listen
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(nonnull FlutterEventSink)events {
-    //设置eventSink
     _eventSink = events;
     return nil;
 }
