@@ -1,42 +1,39 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 
 enum ConnectionType {
-  //2G网络
+  //2G
   TYPE_2G,
-  //3G网络
+  //3G
   TYPE_3G,
-  //4G网络
+  //4G
   TYPE_4G,
-  //5G网络
+  //5G
   TYPE_5G,
-  //手机
+  //mobile
   TYPE_MOBILE,
   //WIFI
   TYPE_WIFI,
-  //没有
+  //none
   TYPE_NONE
 }
 
-//连接
+//connect
 class Flutterflappyconnect {
-  //渠道
-  static const MethodChannel _channel =
-      const MethodChannel('flutterflappyconnect');
+  //channel
+  static const MethodChannel _channel = const MethodChannel('flutterflappyconnect');
 
-  //用于接收回调新的的channel
-  static const EventChannel _eventChannel =
-      EventChannel('flutterflappyconnect_event');
+  //event channel
+  static const EventChannel _eventChannel = EventChannel('flutterflappyconnect_event');
 
-  //监听
+  //listeners
   static List<VoidCallback> _networkChangedListeners = [];
 
-  //是否处于监听状态
+  //is listen
   static bool _isListen = false;
 
-  //获取当前的连接类型
+  //get connection type
   static Future<ConnectionType> getConnectionType() async {
     final String? version = await _channel.invokeMethod('getConnectionType');
     if (version == "0") {
@@ -63,21 +60,19 @@ class Flutterflappyconnect {
     return ConnectionType.TYPE_NONE;
   }
 
-  //新增监听
+  //add change listener
   static void addNetworkChangeListener(VoidCallback callback) {
     if (!_networkChangedListeners.contains(callback)) {
       _networkChangedListeners.add(callback);
     }
-    //没有开启监听就开启监听
+    //not start
     if (!_isListen) {
       _isListen = true;
-      //注册用于和原生代码的持续回调
-      Stream<String?> stream = _eventChannel
-          .receiveBroadcastStream()
-          .map((result) => result as String?);
-      //数据
+      //add Broadcast
+      Stream<String?> stream = _eventChannel.receiveBroadcastStream().map((result) => result as String?);
+      //listen
       stream.listen((data) {
-        //数据
+        //data
         for (int s = 0; s < _networkChangedListeners.length; s++) {
           _networkChangedListeners[s]();
         }
@@ -85,14 +80,14 @@ class Flutterflappyconnect {
     }
   }
 
-  //移除监听
+  //remove
   static void removeNetworkChangeListener(VoidCallback callback) {
     if (_networkChangedListeners.contains(callback)) {
       _networkChangedListeners.remove(callback);
     }
   }
 
-  //移除所有监听
+  //remove all
   static void clearNetworkChangeListener(VoidCallback callback) {
     _networkChangedListeners.clear();
   }
